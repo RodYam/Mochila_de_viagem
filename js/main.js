@@ -29,9 +29,9 @@ form.addEventListener("submit", (evento) => {
 
         atualizaElemento(itemAtual);
 
-        itens[existe.id] = itemAtual;
+        itens[itens.findIndex(elemento => elemento.id === existe.id)] = itemAtual;
     } else {
-        itemAtual.id = itens.length;
+        itemAtual.id = itens[itens.length - 1] ? (itens[itens.length-1]).id + 1 : 0;
 
         criaElemento(itemAtual);
 
@@ -45,6 +45,7 @@ form.addEventListener("submit", (evento) => {
     quantidade.value = "";
 })
 
+//Criar um Elemento
 // Refatoração da função `criaElemento` para que possua apenas a função que faça sentido ao nome. 
 function criaElemento(item) {
 
@@ -58,9 +59,36 @@ function criaElemento(item) {
     
     novoItem.innerHTML += item.nome;
 
+    novoItem.appendChild(botaoDeleta(item.id));
+
     lista.appendChild(novoItem);    
 }
 
 function atualizaElemento(item) {
     document.querySelector("[data-id='"+item.id+"']").innerHTML = item.quantidade;
+}
+
+//Para deletar um item
+//this.parentNode irá remover todo o conteudo da li, não apenas o botao.
+function botaoDeleta(id) {
+    const elementoBotao = document.createElement("button");
+    elementoBotao.innetText = "X";
+
+    elementoBotao.addEventListener("click", function() {
+        deletaElemento(this.parentNode, id)
+    })
+
+    return elementoBotao;
+}
+
+function deletaElemento(tag, id) {
+    tag.remove();
+
+    //remover um item do array
+    //itens.splice("o que queremos remover - id" , 1)
+    itens.splice(itens.findIndex(elemento => elemento.id === id), 1);
+
+    console.log(itens);
+
+    localStorage.setItem("itens", JSON.stringify(itens));
 }
